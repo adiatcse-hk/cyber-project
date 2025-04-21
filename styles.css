@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Sans+MS:wght@400;700&display=swap');
+
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    text-align: center;
+    background: black;
+    background-size: cover;
+    color: yellow;
+    padding: 20px;
+    text-shadow: 2px 2px 4px black;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.8);
+    color: black;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 3px solid gold;
+}
+
+textarea {
+    width: 90%;
+    height: 100px;
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid #6a11cb;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #f9f9f9;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px;
+    border: 2px solid #6a11cb;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #f9f9f9;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: gold;
+    color: black;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+button:hover {
+    background: orange;
+    transform: rotate(-5deg) scale(1.1);
+}
+
+h1 {
+    font-size: 36px;
+    color: orange;
+    text-shadow: 3px 3px 6px black;
+}
+
+h3 {
+    color: #333;
+    font-size: 20px;
+}
+
+#outputText {
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.7);
+    display: inline-block;
+}
+

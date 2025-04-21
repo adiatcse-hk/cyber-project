@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playfair & Affine Cipher</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Playfair & Affine Cipher</h1>
+        <select id="cipherType">
+            <option value="playfair">Playfair Cipher</option>
+            <option value="affine">Affine Cipher</option>
+        </select>
+        <br>
+        <textarea id="inputText" placeholder="Enter text"></textarea>
+        <br>
+        <input id="key" type="text" placeholder="Enter key (Playfair) or a,b values (Affine)">
+        <br>
+        <button onclick="encrypt()">Encrypt</button>
+        <button onclick="decrypt()">Decrypt</button>
+        <h3>Result:</h3>
+        <p id="outputText"></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
