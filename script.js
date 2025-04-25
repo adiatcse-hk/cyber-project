@@ -79,45 +79,61 @@ function formatPlayfairText(text) {
     return formattedText;
 }
 
+function search(keyT, a, b, pos) {
+    for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+            if (keyT[i][j] === a) {
+                pos[0] = i;
+                pos[1] = j;
+            } else if (keyT[i][j] === b) {
+                pos[2] = i;
+                pos[3] = j;
+            }
+        }
+    }
+}
+
 function playfairEncrypt(text, key) {
     let keyT = generateKeyTable(key);
     text = formatPlayfairText(text);
-    let res = '';
-    for (let i = 0; i < text.length; i += 2) {
-        let [r1, c1, r2, c2] = [...findPosition(keyT, text[i]), ...findPosition(keyT, text[i + 1])];
-        if (r1 === r2) {
-            res += keyT[r1][(c1 + 1) % 5] + keyT[r2][(c2 + 1) % 5];
-        } else if (c1 === c2) {
-            res += keyT[(r1 + 1) % 5][c1] + keyT[(r2 + 1) % 5][c2];
+    let str = text.split('');
+    let pos = new Array(4);
+    
+    for (let i = 0; i < str.length; i += 2) {
+        search(keyT, str[i], str[i + 1], pos);
+        if (pos[0] === pos[2]) {
+            str[i] = keyT[pos[0]][(pos[1] + 1) % 5];
+            str[i + 1] = keyT[pos[0]][(pos[3] + 1) % 5];
+        } else if (pos[1] === pos[3]) {
+            str[i] = keyT[(pos[0] + 1) % 5][pos[1]];
+            str[i + 1] = keyT[(pos[2] + 1) % 5][pos[1]];
         } else {
-            res += keyT[r1][c2] + keyT[r2][c1];
+            str[i] = keyT[pos[0]][pos[3]];
+            str[i + 1] = keyT[pos[2]][pos[1]];
         }
     }
-    return res;
+    return str.join('');
 }
 
 function playfairDecrypt(text, key) {
     let keyT = generateKeyTable(key);
-    let res = '';
-    for (let i = 0; i < text.length; i += 2) {
-        let [r1, c1, r2, c2] = [...findPosition(keyT, text[i]), ...findPosition(keyT, text[i + 1])];
-        if (r1 === r2) {
-            res += keyT[r1][(c1 + 4) % 5] + keyT[r2][(c2 + 4) % 5];
-        } else if (c1 === c2) {
-            res += keyT[(r1 + 4) % 5][c1] + keyT[(r2 + 4) % 5][c2];
+    let str = text.split('');
+    let pos = new Array(4);
+    
+    for (let i = 0; i < str.length; i += 2) {
+        search(keyT, str[i], str[i + 1], pos);
+        if (pos[0] === pos[2]) {
+            str[i] = keyT[pos[0]][(pos[1] + 4) % 5];
+            str[i + 1] = keyT[pos[0]][(pos[3] + 4) % 5];
+        } else if (pos[1] === pos[3]) {
+            str[i] = keyT[(pos[0] + 4) % 5][pos[1]];
+            str[i + 1] = keyT[(pos[2] + 4) % 5][pos[1]];
         } else {
-            res += keyT[r1][c2] + keyT[r2][c1];
+            str[i] = keyT[pos[0]][pos[3]];
+            str[i + 1] = keyT[pos[2]][pos[1]];
         }
     }
-    return res;
-}
-
-function findPosition(keyT, letter) {
-    for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < 5; j++) {
-            if (keyT[i][j] === letter) return [i, j];
-        }
-    }
+    return str.join('');
 }
 
 // Affine Cipher Implementation
@@ -127,27 +143,41 @@ function gcd(a, b) {
 
 function affineEncrypt(text, a, b) {
     if (gcd(a, 26) !== 1) return "Invalid Key: 'a' must be coprime with 26";
-    return text.toUpperCase().replace(/[A-Z]/g, letter => 
-        String.fromCharCode(((a * (letter.charCodeAt(0) - 65) + b) % 26) + 65)
-    );
-}
-
-function modInverse(a, m) {
-    a = a % m;
-    for (let x = 1; x < m; x++) {
-        if ((a * x) % m === 1) return x;
+    let msg = text.toUpperCase().replace(/[^A-Z]/g, '');
+    let cipher = '';
+    
+    for (let ch of msg) {
+        if (ch !== ' ') {
+            cipher += String.fromCharCode(((a * (ch.charCodeAt(0) - 65) + b) % 26) + 65);
+        } else {
+            cipher += ' ';
+        }
     }
-    return -1;
+    return cipher;
 }
 
 function affineDecrypt(text, a, b) {
-    let a_inv = modInverse(a, 26);
-    if (a_inv === -1) return "Invalid Key: No Modular Inverse for 'a'";
-
-    return text.toUpperCase().replace(/[A-Z]/g, letter => {
-        let decryptedCharCode = (a_inv * ((letter.charCodeAt(0) - 65 - b + 26) % 26)) % 26;
-        return String.fromCharCode(decryptedCharCode + 65);
-    });
+    let a_inv = 0;
+    for (let i = 0; i < 26; i++) {
+        if ((a * i) % 26 === 1) {
+            a_inv = i;
+            break;
+        }
+    }
+    if (a_inv === 0) return "Invalid Key: No Modular Inverse for 'a'";
+    
+    let cipher = text.toUpperCase().replace(/[^A-Z]/g, '');
+    let msg = '';
+    
+    for (let ch of cipher) {
+        if (ch !== ' ') {
+            let decrypted = a_inv * ((ch.charCodeAt(0) - 65 - b + 26) % 26);
+            msg += String.fromCharCode((decrypted % 26) + 65);
+        } else {
+            msg += ' ';
+        }
+    }
+    return msg;
 }
 
 function encrypt() {
@@ -183,7 +213,7 @@ function decrypt() {
     }
     document.getElementById("outputText").innerText = output;
 }
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("hackBtn").addEventListener("click", hackAnimation);
-});
 
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("hackBtn")?.addEventListener("click", hackAnimation);
+});
